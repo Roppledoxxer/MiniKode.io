@@ -1,1 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/jpeg" href="IMG_0716.jpeg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MiniKode.io</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Courier New", monospace;
+      background: #1e1e1e;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
 
+    header {
+      background: #282c34;
+      padding: 12px 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #61dafb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #editor, #preview, #helpPage {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      border: none;
+      margin: 0;
+    }
+
+    #editor {
+      background: #1e1e1e;
+      color: #fff;
+      border: none;
+      resize: none;
+      outline: none;
+      padding: 12px;
+      font-size: 15px;
+      line-height: 1.4em;
+    }
+
+    #helpPage {
+      display: none;
+      overflow-y: auto;
+      padding: 20px;
+      background: #121212;
+    }
+
+    h2 {
+      color: #61dafb;
+      margin-top: 20px;
+    }
+
+    pre {
+      background: #282c34;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+
+    button {
+      background: #61dafb;
+      border: none;
+      padding: 8px 14px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 1em;
+    }
+
+    button:hover {
+      background: #21a1f1;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <span>MiniKode.io</span>
+      <button id="helpBtn" onclick="toggleHelp()">❔ Help</button>
+    </div>
+    <button id="runBtn" onclick="toggleMode()">▶ Run</button>
+  </header>
+
+  <main>
+    <textarea id="editor">
+<!-- Write your HTML, CSS, or JS here -->
+<h1>Hello, MiniKode.io!</h1>
+<p>This is a fullscreen live coding playground 🚀</p>
+<script>
+  console.log("Welcome to MiniKode.io!");
+</script>
+    </textarea>
+    <iframe id="preview" style="display:none;"></iframe>
+
+    <div id="helpPage">
+      <h2>📘 Coding Reference</h2>
+
+      <h3>HTML</h3>
+      <ul>
+        <li><b>&lt;p&gt;</b> – Paragraph of text  
+          <pre>&lt;p&gt;Hello World&lt;/p&gt;</pre>
+        </li>
+        <li><b>&lt;h1&gt;...&lt;h6&gt;</b> – Headings  
+          <pre>&lt;h1&gt;Big Title&lt;/h1&gt;</pre>
+        </li>
+        <li><b>&lt;a&gt;</b> – Link to another page  
+          <pre>&lt;a href="https://minikode.io"&gt;Click me&lt;/a&gt;</pre>
+        </li>
+        <li><b>&lt;img&gt;</b> – Image  
+          <pre>&lt;img src="image.png" alt="desc"&gt;</pre>
+        </li>
+      </ul>
+
+      <h3>CSS</h3>
+      <ul>
+        <li><b>color</b> – text color  
+          <pre>p { color: red; }</pre>
+        </li>
+        <li><b>background</b> – element background  
+          <pre>body { background: black; }</pre>
+        </li>
+        <li><b>margin / padding</b> – spacing  
+          <pre>div { margin: 10px; padding: 5px; }</pre>
+        </li>
+      </ul>
+
+      <h3>JavaScript</h3>
+      <ul>
+        <li><b>alert()</b> – show popup  
+          <pre>alert("Hello!");</pre>
+        </li>
+        <li><b>console.log()</b> – print to console  
+          <pre>console.log("Debugging...");</pre>
+        </li>
+        <li><b>document.getElementById()</b> – find element by ID  
+          <pre>let x = document.getElementById("myDiv");</pre>
+        </li>
+        <li><b>function</b> – reusable block of code  
+          <pre>
+function greet(name) {
+  return "Hello " + name;
+}
+          </pre>
+        </li>
+      </ul>
+    </div>
+  </main>
+
+  <script>
+    const editor = document.getElementById("editor");
+    const preview = document.getElementById("preview");
+    const helpPage = document.getElementById("helpPage");
+    const runBtn = document.getElementById("runBtn");
+    const helpBtn = document.getElementById("helpBtn");
+
+    let inPreview = false;
+    let inHelp = false;
+
+    function toggleMode() {
+      if (inHelp) return; // Can't run inside help
+
+      if (!inPreview) {
+        // Switch to preview
+        preview.srcdoc = editor.value;
+        editor.style.display = "none";
+        preview.style.display = "block";
+        runBtn.textContent = "⏹ Exit";
+        inPreview = true;
+      } else {
+        // Back to editor
+        editor.style.display = "block";
+        preview.style.display = "none";
+        runBtn.textContent = "▶ Run";
+        inPreview = false;
+      }
+    }
+
+    function toggleHelp() {
+      if (!inHelp) {
+        // Show help
+        editor.style.display = "none";
+        preview.style.display = "none";
+        helpPage.style.display = "block";
+        helpBtn.textContent = "⬅ Back";
+        runBtn.disabled = true;
+        inHelp = true;
+      } else {
+        // Back to editor
+        helpPage.style.display = "none";
+        editor.style.display = "block";
+        helpBtn.textContent = "❔ Help";
+        runBtn.disabled = false;
+        inHelp = false;
+      }
+    }
+  </script>
+</body>
+</html>
